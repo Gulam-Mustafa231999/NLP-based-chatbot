@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <title>Gulam Mustafa and Fariyab Chatbot</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gulam Mustafa and Fariyab Chatbot</h1>
+        </div>
+        <form>
+            <div id="chatbox">
+                <p class="botText"><span>Hello, User! I am your chatbot.</span></p>
+            </div>
+            <div id="userInput">
+                <input id="text" type="text" name="msg" placeholder="Type your message" class="form-control">
+                <button type="submit" id="send">Send</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // window.setInterval(function() {
+            //     var elem = document.getElementById('chatbox');
+            //     elem.scrollTop = elem.scrollHeight;
+            // }, 5000);
+
+            $("form").on("submit", function(event) {
+                var rawText = $("#text").val();
+                var userHtml = '<p class="userText"><span>' + rawText + "</span></p>";
+                $("#text").val("");
+                $("#chatbox").append(userHtml);
+                var elemts = document.getElementsByClassName("userText");
+                elemts[elemts.length - 1].scrollIntoView({
+                    block: "start",
+                    behavior: "smooth",
+                });
+                $.ajax({
+                    data: {
+                        msg: rawText,
+                    },
+                    type: "POST",
+                    url: "/get",
+                }).done(function(data) {
+                    var botHtml = "<p class=\"botText\"><span>" + data + "</span></p>";
+                    console.log(botHtml);
+                    $("#chatbox").append($.parseHTML(botHtml));
+                    var bot_elemts = document.getElementsByClassName("botText");
+                    elemts[elemts.length - 1].scrollIntoView({
+                        block: "start",
+                        behavior: "smooth",
+                    });
+                });
+                event.preventDefault();
+            });
+        });
+    </script>
+</body>
+
+</html>
